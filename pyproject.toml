@@ -1,0 +1,13 @@
+[project]
+name = "fastapi-ecommerce"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.135.2",
+    "psycopg2>=2.9.11",
+    "sqlmodel>=0.0.37",
+]
+[tool.fastapi]
+entrypoint = "main:app"

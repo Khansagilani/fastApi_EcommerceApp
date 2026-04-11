@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Shop</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+
+    <header>
+        <h1>My Shop</h1>
+        <nav>
+            <button class="active" onclick="showPage('products', this)">Products</button>
+            <button onclick="showPage('register', this)">Register</button>
+            <button onclick="showPage('cart', this)">Cart</button>
+            <button onclick="showPage('orders', this)">My Orders</button>
+        </nav>
+        <div id="user-info"></div>
+    </header>
+
+    <main>
+
+        <div id="products" class="page active">
+            <h2>Products</h2>
+            <div id="products-container"></div>
+        </div>
+
+        <div id="register" class="page">
+            <h2>Create account</h2>
+            <div class="form-box">
+                <label>Name</label>
+                <input id="reg-name" type="text" placeholder="Your name" />
+                <label>Email</label>
+                <input id="reg-email" type="email" placeholder="you@email.com" />
+                <label>Password</label>
+                <input id="reg-pass" type="password" placeholder="Password" />
+                <label>Phone (optional)</label>
+                <input id="reg-phone" type="text" placeholder="+92 300 0000000" />
+                <button class="btn btn-dark" onclick="registerUser()">Create account</button>
+                <div id="reg-msg"></div>
+            </div>
+        </div>
+
+        <div id="cart" class="page">
+            <h2>Your cart</h2>
+            <div class="form-box" style="margin-bottom: 1.5rem;">
+                <label>Your user ID <span style="color:#999">(you get this after registering)</span></label>
+                <input id="cart-user-id" type="number" placeholder="e.g. 1" oninput="loadCart()" />
+            </div>
+            <div id="cart-items-list">
+                <p class="empty">Enter your user ID above to see your cart.</p>
+            </div>
+        </div>
+
+        <!-- ── Orders page ── -->
+        <div id="orders" class="page">
+            <h2>My orders</h2>
+            <div class="form-box" style="margin-bottom: 1.5rem;">
+                <label>Your user ID</label>
+                <input id="orders-user-id" type="number" placeholder="e.g. 1" oninput="loadOrders()" />
+            </div>
+            <div id="orders-list">
+                <p class="empty">Enter your user ID above to see your orders.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
