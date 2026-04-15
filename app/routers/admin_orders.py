@@ -3,8 +3,13 @@ from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from decimal import Decimal
-
-router = APIRouter(prefix="/adminorders", tags=["adminorders"])
+from dependencies import require_admin
+from fastapi import Depends
+router = APIRouter(
+    prefix="/api/admin/orders",
+    tags=["admin orders"],
+    dependencies=[Depends(require_admin)]
+)
 
 
 @router.get("/", response_model=list[OrderRead])

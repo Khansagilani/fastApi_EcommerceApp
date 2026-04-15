@@ -2,8 +2,14 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from app.models import User, UserCreate, UserRead
 from app.db import SessionDep
+from dependencies import require_admin
+from fastapi import Depends
 
-router = APIRouter(prefix="/adminusers", tags=["adminUsers"])
+router = APIRouter(
+    prefix="/api/admin/users",
+    tags=["admin users"],
+    dependencies=[Depends(require_admin)]
+)
 
 
 @router.get("/", response_model=list[UserRead])

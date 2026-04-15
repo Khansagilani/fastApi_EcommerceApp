@@ -2,8 +2,13 @@ from app.models import Product, ProductCreate, ProductRead, ProductUpdate
 from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
-
-router = APIRouter(prefix="/adminproducts", tags=["adminproducts"])
+from dependencies import require_admin
+from fastapi import Depends
+router = APIRouter(
+    prefix="/api/admin/products",
+    tags=["admin products"],
+    dependencies=[Depends(require_admin)]
+)
 
 
 @router.post("/", response_model=ProductRead)
