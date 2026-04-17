@@ -10,33 +10,37 @@ if invalid or expired   → raise 401
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from app.models import User
+from app.db import SessionDep
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+load_dotenv(find_dotenv())
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+admin_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/auth/login")
 
 
-def require_admin(token: str = Depends(oauth2_scheme)):
+def require_admin(token: str = Depends(admin_oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        subject = payload.get("sub")
-        if subject != "admin":
+        if payload.get("sub") != "admin":
             raise HTTPException(status_code=401, detail="Not authorized")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
-"""
-OAuth2PasswordBearer reads the token 
-from the Authorization: Bearer <token> header automatically.
- jwt.decode() verifies the signature AND checks the expiry at
- the same time — if the token is expired or tampered with,
- it throws a JWTError which we catch and turn into a 401.
- We also check that sub equals "admin" so a random valid token
- from somewhere else wouldn't work.
-"""
+def get_current_user(token: str = Depends(oauth2_scheme), session: SessionDep = None):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload.get("sub"))
+    except (JWTError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user

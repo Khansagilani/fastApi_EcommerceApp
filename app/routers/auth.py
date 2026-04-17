@@ -25,8 +25,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 8
 
-print("SECRET_KEY:", SECRET_KEY)
-print("ADMIN_USERNAME:", ADMIN_USERNAME)
 
 router = APIRouter(prefix="/api/admin/auth", tags=["admin auth"])
 
