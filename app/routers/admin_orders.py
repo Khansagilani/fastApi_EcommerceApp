@@ -3,12 +3,12 @@ from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from decimal import Decimal
-from dependencies import require_admin
+from dependencies import get_current_admin
 from fastapi import Depends
 router = APIRouter(
     prefix="/api/admin/orders",
     tags=["admin orders"],
-    dependencies=[Depends(require_admin)]
+    dependencies=[Depends(get_current_admin)]
 )
 
 

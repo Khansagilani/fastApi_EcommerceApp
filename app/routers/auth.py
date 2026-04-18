@@ -10,17 +10,16 @@ if no  → raise 401
 """
 from jose import jwt
 from datetime import datetime, timedelta
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import Depends
-import os
-from dotenv import load_dotenv
+from sqlmodel import select
+from app.models import User
+from app.db import SessionDep
+from hashing import verify_password
 from dotenv import load_dotenv, find_dotenv
+import os
 
 load_dotenv(find_dotenv())
-
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_HOURS = 8
@@ -29,27 +28,38 @@ TOKEN_EXPIRE_HOURS = 8
 router = APIRouter(prefix="/api/admin/auth", tags=["admin auth"])
 
 
-def create_token():
+def create_user_token(user_id: int):
     payload = {
-        "sub": "admin",
+        "sub": str(user_id),
         "exp": datetime.utcnow() + timedelta(hours=TOKEN_EXPIRE_HOURS)
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
 @router.post("/login")
-async def login(form: OAuth2PasswordRequestForm = Depends()):
-    if form.username != ADMIN_USERNAME or form.password != ADMIN_PASSWORD:
+async def login(form: OAuth2PasswordRequestForm = Depends(), session: SessionDep = None):
+    user = session.exec(select(User).where(
+        User.email == form.username)).first()
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    token = create_token()
+    if not verify_password(form.password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user.is_admin:
+        raise HTTPException(
+            status_code=403, detail="Forbidden")
+    token = create_user_token(user.id)
     return {"access_token": token, "token_type": "bearer"}
 
 """
-load_dotenv() reads your .env file and makes those variables available via 
-os.getenv(). OAuth2PasswordRequestForm is a FastAPI built-in that
- automatically expects a username and password in the
- request body — you don't need to build that model yourself.
- create_token() builds the payload dictionary and signs it with your
- secret key using the HS256 algorithm.
+Admin login endpoint
+↓
+receive email + password
+↓
+check user exists in DB
+↓
+verify password
+↓
+check is_admin == True
+↓
+return JWT token
 """

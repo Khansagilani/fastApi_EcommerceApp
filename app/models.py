@@ -12,6 +12,7 @@ class UserBase(SQLModel):
     password: str
     phone: Optional[str] = None
     address: Optional[str] = None
+    is_admin: bool = False
 
 
 class User(UserBase, table=True):
