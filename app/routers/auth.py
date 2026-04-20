@@ -1,13 +1,3 @@
-"""
-load ADMIN_USERNAME, ADMIN_PASSWORD, SECRET_KEY from .env
-↓
-/login endpoint receives username + password
-↓
-check if they match the env variables
-↓
-if yes → create a JWT token with expiry → return it
-if no  → raise 401
-"""
 from jose import jwt
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends

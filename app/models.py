@@ -12,11 +12,11 @@ class UserBase(SQLModel):
     password: str
     phone: Optional[str] = None
     address: Optional[str] = None
-    is_admin: bool = False
 
 
 class User(UserBase, table=True):
     __tablename__ = "users"
+    is_admin: bool = False
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

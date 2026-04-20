@@ -1,10 +1,12 @@
-from app.models import Cart, CartItem, Order, OrderItem, OrderRead, Product
+from app.models import Cart, CartItem, Order, OrderItem, OrderRead, Product, User
 from app.db import SessionDep
+from app.models import User
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from decimal import Decimal
 from dependencies import get_current_admin
 from fastapi import Depends
+
 router = APIRouter(
     prefix="/api/admin/orders",
     tags=["admin orders"],
@@ -22,7 +24,7 @@ async def get_user_orders(session: SessionDep, skip: int = 0, limit: int = 20):
 
 
 @router.get("/{user_id}", response_model=list[OrderRead])
-async def get_user_orders(user_id: int, session: SessionDep):
+async def get_orders_by_user(user_id: int, session: SessionDep):
     """Get all orders for a user, newest first."""
     return session.exec(
         select(Order)

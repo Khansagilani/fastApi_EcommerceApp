@@ -1,4 +1,4 @@
-from app.models import Product, ProductCreate, ProductRead, ProductUpdate
+from app.models import Product, ProductCreate, ProductRead, ProductUpdate, User
 from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select

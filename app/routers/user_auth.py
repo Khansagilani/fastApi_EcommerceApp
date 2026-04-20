@@ -8,6 +8,7 @@ from app.db import SessionDep
 from hashing import verify_password
 from dotenv import load_dotenv, find_dotenv
 import os
+from fastapi import Depends
 
 load_dotenv(find_dotenv())
 
