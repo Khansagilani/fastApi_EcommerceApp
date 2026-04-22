@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from app.models import User, UserCreate, UserRead
 from app.db import SessionDep
-from dependencies import get_current_admin
+from app.helpers.dependencies import get_current_admin
 from fastapi import Depends
 
 router = APIRouter(

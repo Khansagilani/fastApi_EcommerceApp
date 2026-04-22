@@ -3,7 +3,7 @@ from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from datetime import datetime
-from dependencies import get_current_user
+from app.helpers.dependencies import get_current_user
 from fastapi import Depends
 
 

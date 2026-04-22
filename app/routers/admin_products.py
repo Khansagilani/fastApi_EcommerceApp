@@ -2,7 +2,7 @@ from app.models import Product, ProductCreate, ProductRead, ProductUpdate, User
 from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
-from dependencies import get_current_admin
+from app.helpers.dependencies import get_current_admin
 from fastapi import Depends
 router = APIRouter(
     prefix="/api/admin/products",

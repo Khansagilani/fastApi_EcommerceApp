@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.db import create_db_and_tables
 from app.routers import products, cart, orders, users, admin_orders, admin_products, admin_users
-from app.routers import auth
+from app.routers import admin_auth
 from app.routers import user_auth
 
 
@@ -31,7 +31,7 @@ app.include_router(users.router)
 app.include_router(admin_orders.router)
 app.include_router(admin_products.router)
 app.include_router(admin_users.router)
-app.include_router(auth.router)
+app.include_router(admin_auth.router)
 app.include_router(user_auth.router)
 
 # Then static files and frontend

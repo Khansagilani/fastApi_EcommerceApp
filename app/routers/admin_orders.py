@@ -1,10 +1,8 @@
-from app.models import Cart, CartItem, Order, OrderItem, OrderRead, Product, User
+from app.models import Order, OrderItem, OrderRead, Product, StatusUpdate
 from app.db import SessionDep
-from app.models import User
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
-from decimal import Decimal
-from dependencies import get_current_admin
+from app.helpers.dependencies import get_current_admin
 from fastapi import Depends
 
 router = APIRouter(
@@ -18,8 +16,9 @@ router = APIRouter(
 async def get_user_orders(session: SessionDep, skip: int = 0, limit: int = 20):
     """Get all orders from all users, newest firs"""
     return session.exec(
-        select(Order).offset(skip).limit(limit)
-        .order_by(Order.created_at.desc())
+        select(Order).order_by(Order.created_at.desc()
+                               .offset(skip).limit(limit)
+                               )
     ).all()
 
 
@@ -68,10 +67,10 @@ async def get_order_detail(user_id: int, order_id: int, session: SessionDep):
 
 
 @router.patch("/{order_id}/status")
-async def update_order_status(order_id: int, status: str, session: SessionDep):
+async def update_order_status(order_id: int, update: StatusUpdate, session: SessionDep):
     """Update order status (admin use). Valid: pending, paid, shipped, delivered, cancelled."""
     valid_statuses = {"pending", "paid", "shipped", "delivered", "cancelled"}
-    if status not in valid_statuses:
+    if update not in valid_statuses:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid status. Must be one of: {valid_statuses}"
@@ -79,7 +78,7 @@ async def update_order_status(order_id: int, status: str, session: SessionDep):
     order = session.get(Order, order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    order.status = status
+    order.status = update
     session.add(order)
     session.commit()
-    return {"message": f"Order status updated to '{status}'"}
+    return {"message": f"Order status updated to '{update}'"}

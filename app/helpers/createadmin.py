@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from app.db import engine
 from app.models import User
-from hashing import hash_password
+from app.helpers.hashing import hash_password
 
 
 def create_admin():

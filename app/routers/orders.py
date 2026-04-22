@@ -3,14 +3,15 @@ from app.db import SessionDep
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from decimal import Decimal
-from dependencies import get_current_user
+from app.helpers.dependencies import get_current_user
 from fastapi import Depends
+from app.models import CheckoutRequest
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 @router.post("/checkout", response_model=OrderRead)
-async def checkout(shipping_addr: str, session: SessionDep, current_user: User = Depends(get_current_user)):
+async def checkout(request: CheckoutRequest, session: SessionDep, current_user: User = Depends(get_current_user)):
     """
     Convert the user's cart into an order.
     - Validates stock for every item
@@ -69,7 +70,7 @@ async def checkout(shipping_addr: str, session: SessionDep, current_user: User =
         user_id=current_user.id,
         total_amount=total,
         status="pending",
-        shipping_addr=shipping_addr,
+        shipping_addr=request.shipping_addr,
     )
     session.add(order)
     session.flush()  # get order.id before adding items

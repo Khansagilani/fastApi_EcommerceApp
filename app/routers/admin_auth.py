@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 from app.models import User
 from app.db import SessionDep
-from hashing import verify_password
+from app.helpers.hashing import verify_password
 from dotenv import load_dotenv, find_dotenv
 import os
 

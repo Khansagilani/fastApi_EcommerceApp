@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from app.models import User, UserCreate, UserRead
 from app.db import SessionDep
-from hashing import hash_password
-from dependencies import get_current_user
+from app.helpers.hashing import hash_password
+from app.helpers.dependencies import get_current_user
 from fastapi import Depends
 
 
