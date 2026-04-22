@@ -9,6 +9,7 @@ from app.helpers.hashing import verify_password
 from dotenv import load_dotenv, find_dotenv
 import os
 
+
 load_dotenv(find_dotenv())
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -39,6 +40,7 @@ async def login(form: OAuth2PasswordRequestForm = Depends(), session: SessionDep
             status_code=403, detail="Forbidden")
     token = create_user_token(user.id)
     return {"access_token": token, "token_type": "bearer"}
+
 
 """
 Admin login endpoint

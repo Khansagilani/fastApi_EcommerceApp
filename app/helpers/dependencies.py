@@ -6,10 +6,11 @@ if invalid or expired   → raise 401"""
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from app.models import User
+from app.models import User, BlacklistedToken
 from app.db import SessionDep
 import os
 from dotenv import load_dotenv, find_dotenv
+from sqlmodel import select
 
 load_dotenv(find_dotenv())
 
@@ -25,6 +26,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), session: SessionDep = 
         user_id = int(payload.get("sub"))
     except (JWTError, ValueError):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
+      # blacklist check goes here
+    blacklisted = session.exec(select(BlacklistedToken).where(Blacklisted.token == token)
+                               ).first()
+    if blacklisted:
+        raise HTTPException(
+            status_code=401, detail="You have been logged out!")
 
     user = session.get(User, user_id)
     if not user:

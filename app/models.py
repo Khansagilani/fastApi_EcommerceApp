@@ -154,3 +154,12 @@ class OrderItemBase(SQLModel):
 class OrderItem(OrderItemBase, table=True):
     __tablename__ = "order_items"
     id: Optional[int] = Field(default=None, primary_key=True)
+
+# __ Logout __________________________________________________
+
+
+class BlacklistedToken(SQLModel, table=True):
+    __tablename__ = "blacklisted_tokens"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    token: str = Field(unique=True)
+    blacklisted_at: datetime = Field(default_factory=datetime.utcnow)

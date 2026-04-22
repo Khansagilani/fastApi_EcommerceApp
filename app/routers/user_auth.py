@@ -3,12 +3,13 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
-from app.models import User
+from app.models import User, BlacklistedToken
 from app.db import SessionDep
 from app.helpers.hashing import verify_password
 from dotenv import load_dotenv, find_dotenv
 import os
 from fastapi import Depends
+from app.helpers.dependencies import oauth2_scheme
 
 load_dotenv(find_dotenv())
 
@@ -38,3 +39,14 @@ async def login(form: OAuth2PasswordRequestForm = Depends(), session: SessionDep
 
     token = create_user_token(user.id)
     return {"access_token": token, "token_type": "bearer"}
+
+
+@router.post("/logout")
+async def logout(
+    user_token: str = Depends(oauth2_scheme),  # ← grab token from header
+    session: SessionDep = None
+):
+    blacklisted = BlacklistedToken(token=user_token)
+    session.add(blacklisted)
+    session.commit()
+    return {"message": "You have been logged out"}
